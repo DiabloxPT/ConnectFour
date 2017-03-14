@@ -64,6 +64,7 @@ class Node {
 
 	void makeSegs() {
 		line =0;
+		int nhor=0, nver=0, ndia1=0;
 		char[][] seg = new char[100][4];
 			//HORIZONTAL
 		for(int i=0; i<6; i++){
@@ -75,18 +76,63 @@ class Node {
 				line++;
 			}
 		}
+		nhor = line;
+		// System.out.println("\nHORIZONTAIS");
+		// for(int i=0; i<line; i++){
+		// 	System.out.print("[" + seg[i][0]+ seg[i][1]+ seg[i][2]+ seg[i][3]+"];");
+		// 	}
+		// System.out.println("\n" + line);
 
-		//for(int i=0; i<)
-
-		//TESTAR O PRINT
-		/*for(int i=0; i< line; i++){
-			System.out.print("[" + seg[i][0]+ seg[i][1]+ seg[i][2]+ seg[i][3]+"];");
+		for(int i=0; i<7; i++){
+			for(int j=0; j<=2; j++){
+				seg[line][0] = board[j][i];
+				seg[line][1] = board[j+1][i];
+				seg[line][2] = board[j+2][i];
+				seg[line][3] = board[j+3][i];
+				line++;
+			}
 		}
-		System.out.println();
-		*/
+		nver = line - nhor;
+		// System.out.println("\nVERTICAIS");
+		// for(int i=nhor; i<line; i++){
+		// 	System.out.print("[" + seg[i][0]+ seg[i][1]+ seg[i][2]+ seg[i][3]+"];");
+		// 	}
+		// System.out.println("\n" + line);
+
+		for(int i=0; i<=2; i++){
+			for(int j=0; j<=3; j++){
+				seg[line][0] = board[i][j];
+				seg[line][1] = board[i+1][j+1];
+				seg[line][2] = board[i+2][j+2];
+				seg[line][3] = board[i+3][j+3];
+				line++;
+			}
+		}
+		ndia1=line - nver;
+		//TESTAR O PRINT
+		System.out.println("\nDIAGONAL (ESQUERDA DIREITA)");
+		for(int i=nver+nhor; i<line; i++){
+			System.out.print("[" + seg[i][0]+ seg[i][1]+ seg[i][2]+ seg[i][3]+"];");
+			}
+		System.out.println("\n" + line);
+
+		for(int i=0; i<=2; i++){
+			for(int j=6; j>=3; j--){
+				seg[line][0] = board[i][j];
+				seg[line][1] = board[i+1][j-1];
+				seg[line][2] = board[i+2][j-2];
+				seg[line][3] = board[i+3][j-3];
+				line++;
+			}
+		}
+
+		System.out.println("\nDIAGONAL (DIREITA ESQUERDA)");
+		for(int i=nver+nhor+ndia1; i<line; i++){
+			System.out.print("[" + seg[i][0]+ seg[i][1]+ seg[i][2]+ seg[i][3]+"];");
+			}
+		System.out.println("\n" + line);
+
 	}
-
-
 }
 
 class ConnectFour {
