@@ -92,7 +92,7 @@ class Node {
 				line++;
 			}
 		}
-		nver = line - nhor;
+		nver = line;
 		// System.out.println("\nVERTICAIS");
 		// for(int i=nhor; i<line; i++){
 		// 	System.out.print("[" + seg[i][0]+ seg[i][1]+ seg[i][2]+ seg[i][3]+"];");
@@ -108,10 +108,10 @@ class Node {
 				line++;
 			}
 		}
-		ndia1=line - nver;
+		ndia1 = line;
 		//TESTAR O PRINT
 		System.out.println("\nDIAGONAL (ESQUERDA DIREITA)");
-		for(int i=nver+nhor; i<line; i++){
+		for(int i=nver; i<line; i++){
 			System.out.print("[" + seg[i][0]+ seg[i][1]+ seg[i][2]+ seg[i][3]+"];");
 			}
 		System.out.println("\n" + line);
@@ -127,7 +127,7 @@ class Node {
 		}
 
 		System.out.println("\nDIAGONAL (DIREITA ESQUERDA)");
-		for(int i=nver+nhor+ndia1; i<line; i++){
+		for(int i=ndia1; i<line; i++){
 			System.out.print("[" + seg[i][0]+ seg[i][1]+ seg[i][2]+ seg[i][3]+"];");
 			}
 		System.out.println("\n" + line);
