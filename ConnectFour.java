@@ -67,7 +67,7 @@ class Node {
 		line =0;
 		int nhor=0, nver=0, ndia1=0; 		//LINHA ONDE TERMINAM AS COMBINACOES HORIZONTAIS, VERTICAIS E DIAGONAIS
 		char[][] seg = new char[100][4];
-		ArrayList<char[]> segs = new ArraList<char[]>();
+		ArrayList<char[]> segs = new ArrayList<char[]>();
 		
 			//HORIZONTAL
 		for(int i=0; i<6; i++){
