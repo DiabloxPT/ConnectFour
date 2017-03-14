@@ -5,9 +5,12 @@ class Node {
 	char[][] board;
 	char player;
 
+	int line;
+
 	Node(char[][] board) {
 		this.board = board;
 		player = 'X';
+		line=0;
 	}
 
 	int findPos(int x) {
@@ -60,8 +63,30 @@ class Node {
 	}
 
 	void makeSegs() {
-		char[] seg = new char[4];
+		line =0;
+		char[][] seg = new char[100][4];
+			//HORIZONTAL
+		for(int i=0; i<6; i++){
+			for(int j=0; j<=3; j++){
+				seg[line][0] = board[i][j];
+				seg[line][1] = board[i][j+1];
+				seg[line][2] = board[i][j+2];
+				seg[line][3] = board[i][j+3];
+				line++;
+			}
+		}
+
+		//for(int i=0; i<)
+
+		//TESTAR O PRINT
+		/*for(int i=0; i< line; i++){
+			System.out.print("[" + seg[i][0]+ seg[i][1]+ seg[i][2]+ seg[i][3]+"];");
+		}
+		System.out.println();
+		*/
 	}
+
+
 }
 
 class ConnectFour {
@@ -78,7 +103,6 @@ class ConnectFour {
 		Node board = new Node(game);
 
 		board.printBoard();
-
 		while(!board.isFull()) {
 			System.out.print("Player " + board.player + " move: ");
 			int n = in.nextInt();
@@ -86,6 +110,7 @@ class ConnectFour {
 			board.checkPlay(n);
 			board.play(n);
 			board.printBoard();
+			board.makeSegs();
 			board.nextPlayer();
 		}
 	}
