@@ -39,11 +39,12 @@ class Node {
 		}
 	}
 
-	void checkPlay(int x) {
+	boolean checkPlay(int x) {
 		if(board[0][x] != '_') {
 			System.out.println("Jogada invalida!");
-			nextPlayer();
+			return false;
 		}
+		return true;
 	}
 
 	void nextPlayer() {
@@ -118,7 +119,7 @@ class Node {
 
 	}
 
-	
+
 }
 
 class ConnectFour {
@@ -138,12 +139,13 @@ class ConnectFour {
 		while(!board.isFull()) {
 			System.out.print("Player " + board.player + " move: ");
 			int n = in.nextInt();
-
-			board.checkPlay(n);
-			board.play(n);
-			board.printBoard();
-			board.makeSegs();
-			board.nextPlayer();
+			if(n>6 || n<0 || !board.checkPlay(n))System.out.println("Escolha um número entre 0 e 6");
+			else{
+				board.play(n);
+				board.printBoard();
+				board.makeSegs();
+				board.nextPlayer();
+			}
 		}
 	}
 }
