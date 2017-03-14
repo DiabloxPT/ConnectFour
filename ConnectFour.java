@@ -63,10 +63,12 @@ class Node {
 		return true;
 	}
 
-	void makeSegs() {
+	ArrayList<char[]> makeSegs() {
 		line =0;
 		int nhor=0, nver=0, ndia1=0; 		//LINHA ONDE TERMINAM AS COMBINACOES HORIZONTAIS, VERTICAIS E DIAGONAIS
 		char[][] seg = new char[100][4];
+		ArrayList<char[]> segs = new ArraList<char[]>();
+		
 			//HORIZONTAL
 		for(int i=0; i<6; i++){
 			for(int j=0; j<=3; j++){
@@ -74,6 +76,7 @@ class Node {
 				seg[line][1] = board[i][j+1];
 				seg[line][2] = board[i][j+2];
 				seg[line][3] = board[i][j+3];
+				segs.add(seg[line]);
 				line++;
 			}
 		}
@@ -85,6 +88,7 @@ class Node {
 				seg[line][1] = board[j+1][i];
 				seg[line][2] = board[j+2][i];
 				seg[line][3] = board[j+3][i];
+				segs.add(seg[line]);
 				line++;
 			}
 		}
@@ -96,6 +100,7 @@ class Node {
 				seg[line][1] = board[i+1][j+1];
 				seg[line][2] = board[i+2][j+2];
 				seg[line][3] = board[i+3][j+3];
+				segs.add(seg[line]);
 				line++;
 			}
 		}
@@ -107,9 +112,16 @@ class Node {
 				seg[line][1] = board[i+1][j-1];
 				seg[line][2] = board[i+2][j-2];
 				seg[line][3] = board[i+3][j-3];
+				segs.add(seg[line]);
 				line++;
 			}
 		}
+		
+		for(int i = 0; i < segs.size(); i++) {
+		    System.out.println(segs.get(i));
+		}
+		
+		return segs;
 		// EXEMPLO DE PRINT P/ TESTE
 		// System.out.println("\nDIAGONAL (DIREITA ESQUERDA)");
 		// for(int i=ndia1; i<line; i++){
