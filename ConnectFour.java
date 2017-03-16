@@ -117,9 +117,9 @@ class Node {
 			}
 		}
 		
-		for(int i = 0; i < segs.size(); i++) {
+		/*for(int i = 0; i < segs.size(); i++) {
 		    System.out.println(segs.get(i));
-		}
+		}*/
 		
 		return segs;
 		// EXEMPLO DE PRINT P/ TESTE
@@ -131,7 +131,37 @@ class Node {
 
 	}
 
-
+	int util(ArrayList<char[]> segs) {
+		int countX = 0;
+		int countO = 0;
+		int utilVal = 0;
+		
+		for(int j = 0; j < segs.size(); j++) {
+			for(int i = 0; i < 4; i++) {
+				if(segs.get(j)[i] == 'X') countX++;
+				if(segs.get(j)[i] == 'O') countO++;
+			}
+			
+			if(countX == 4) utilVal += 512;
+			else if(countX == 3 && countO == 0) utilVal += 50;
+			else if(countX == 2 && countO == 0) utilVal += 10;
+			else if(countX == 1 && countO == 0) utilVal += 1;		
+			else if(countO == 4) utilVal -= 512;
+			else if(countO == 3 && countX == 0) utilVal -= 50;
+			else if(countO == 2 && countX == 0) utilVal -= 10;
+			else if(countO == 1 && countX == 0) utilVal -= 1;
+		
+			countX = 0;
+			countO = 0;
+		}
+		
+		
+		
+		if(player == 'X') return -16 + utilVal;
+		else if(player == 'O') return 16 + utilVal;
+		
+		return 0;
+	}
 }
 
 class ConnectFour {
@@ -155,7 +185,9 @@ class ConnectFour {
 			else{
 				board.play(n);
 				board.printBoard();
-				board.makeSegs();
+				ArrayList<char[]> segs = board.makeSegs();
+				int score = board.util(segs);
+				
 				board.nextPlayer();
 			}
 		}
