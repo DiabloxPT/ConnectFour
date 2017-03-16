@@ -4,7 +4,6 @@ import java.io.*;
 class Node {
 	char[][] board;
 	char player;
-
 	int line;
 
 	Node(char[][] board) {
@@ -46,6 +45,20 @@ class Node {
 		}
 		return true;
 	}
+	
+	int[] checkPlay2() {
+			int[] aux = new int[7];
+			int help=0;
+			for(int x=0; x<7; x++)
+				if(board[0][x] == '_'){
+				 	aux[help] = x;
+					help++;
+				}
+			int[] check = new int[help];
+			for(int x=0; x<help; x++)
+				 	check[x] = aux[x];
+			return check;
+		}
 
 	void nextPlayer() {
 		if(player == 'X') player = 'O';
@@ -162,6 +175,38 @@ class Node {
 		
 		return 0;
 	}
+	boolean checkWin(ArrayList<char[]> segs) {
+		int countX = 0;
+		int countO = 0;
+		int utilVal = 0;
+		
+		for(int j = 0; j < segs.size(); j++) {
+			for(int i = 0; i < 4; i++) {
+				if(segs.get(j)[i] == 'X') countX++;
+				if(segs.get(j)[i] == 'O') countO++;
+			}
+			
+			if(countX == 4 || countO == 4) return true;
+			countX = 0;
+			countO = 0;
+		}
+		
+		return false;
+	}
+	
+	void makeMove(Node board) {
+		List<Node> newBoards = new LinkedList<Node>();
+		int[] possMoves = board.checkPlay2();
+		
+		for(int i = 0; i < possMoves.length; i++) {
+			Node newBoard = board;
+			newBoard.play(possMoves[i]);
+			ArrayList<char[]> segs = board.makeSegs();
+			int score = board.util(segs);
+			newBoard.printBoard();
+		}
+	}
+				
 }
 
 class ConnectFour {
@@ -176,8 +221,9 @@ class ConnectFour {
 		}
 
 		Node board = new Node(game);
+		board.makeMove(board);
 
-		board.printBoard();
+		/*board.printBoard();
 		while(!board.isFull()) {
 			System.out.print("Player " + board.player + " move: ");
 			int n = in.nextInt();
@@ -188,8 +234,13 @@ class ConnectFour {
 				ArrayList<char[]> segs = board.makeSegs();
 				int score = board.util(segs);
 				
+				if(board.checkWin(segs)) {
+					System.out.println("Winner is: " + board.player);
+					return;
+				}
+				
 				board.nextPlayer();
 			}
-		}
+		}*/
 	}
 }
