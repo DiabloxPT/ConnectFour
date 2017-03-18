@@ -5,11 +5,13 @@ class Node {
 	char[][] board;
 	char player;
 	int line;
+	int utility;
 
 	Node(char[][] board) {
 		this.board = board;
 		player = 'X';
 		line=0;
+		utility = 0;
 	}
 
 	int findPos(int x) {
@@ -194,19 +196,29 @@ class Node {
 		return false;
 	}
 	
-	void makeMove(Node board) {
-		List<Node> newBoards = new LinkedList<Node>();
+	public static char[][] copyMatrix(char[][] current_table){
+    char[][] aux_table = new char[6][7];
+    for(int i=0;i<6;i++){
+        System.arraycopy(current_table[i],0, aux_table[i], 0, current_table[0].length);
+    }
+    return aux_table;
+  }
+	
+	ArrayList<Node> makeMove(Node board) {
+		ArrayList<Node> newBoards = new ArrayList<Node>();
 		int[] possMoves = board.checkPlay2();
 		
 		for(int i = 0; i < possMoves.length; i++) {
-			Node newBoard = board;
+		    char[][] aux = copyMatrix(board.board);
+			Node newBoard = new Node(aux);
 			newBoard.play(possMoves[i]);
-			ArrayList<char[]> segs = board.makeSegs();
-			int score = board.util(segs);
-			newBoard.printBoard();
+			ArrayList<char[]> segs = newBoard.makeSegs();
+			newBoard.utility = newBoard.util(segs);
+			
+			newBoards.add(newBoard);
 		}
+		return newBoards;
 	}
-				
 }
 
 class ConnectFour {
@@ -221,13 +233,18 @@ class ConnectFour {
 		}
 
 		Node board = new Node(game);
-		board.makeMove(board);
+		ArrayList<Node> test = board.makeMove(board);
+		
+		for(int i = 0; i < test.size(); i++) {
+		    test.get(i).printBoard();
+		    System.out.println(test.get(i).utility);
+		}
 
 		/*board.printBoard();
 		while(!board.isFull()) {
 			System.out.print("Player " + board.player + " move: ");
 			int n = in.nextInt();
-			if(n>6 || n<0 || !board.checkPlay(n))System.out.println("Escolha um número entre 0 e 6");
+			if(n>6 || n<0 || !board.checkPlay(n))System.out.println("Escolha um numero entre 0 e 6");
 			else{
 				board.play(n);
 				board.printBoard();
