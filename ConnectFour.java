@@ -6,12 +6,28 @@ class Node {
 	char player;
 	int line;
 	int utility;
+	int value;
+
+	Node() {
+		this.player = 'X';
+		this.line = 0;
+		this.utility = 0;
+		this.value = 0;
+	}
 
 	Node(char[][] board) {
 		this.board = board;
-		player = 'X';
-		line=0;
-		utility = 0;
+		this.player = 'X';
+		this.line=0;
+		this.utility = 0;
+		this.value = 0;
+	}
+
+	Node(char[][] board, int utility) {
+		this.board = board;
+		this.player = 'X';
+		this.line=0;
+		this.utility = utility;
 	}
 
 	int findPos(int x) {
@@ -31,10 +47,10 @@ class Node {
 		}
 	}
 
-	void play(int x) {
+	void play(int x, char p) {
 		for(int i = 5; i >= 0; i--) {
 			if(board[i][x] == '_') {
-				board[i][x] = player;
+				board[i][x] = p;
 				return;
 			}
 		}
@@ -204,20 +220,75 @@ class Node {
     return aux_table;
   }
 	
-	ArrayList<Node> makeMove(Node board) {
+	ArrayList<Node> makeMove(Node board, char p) {
 		ArrayList<Node> newBoards = new ArrayList<Node>();
 		int[] possMoves = board.checkPlay2();
 		
 		for(int i = 0; i < possMoves.length; i++) {
 		    char[][] aux = copyMatrix(board.board);
 			Node newBoard = new Node(aux);
-			newBoard.play(possMoves[i]);
+			newBoard.play(possMoves[i], p);
 			ArrayList<char[]> segs = newBoard.makeSegs();
 			newBoard.utility = newBoard.util(segs);
 			
 			newBoards.add(newBoard);
 		}
 		return newBoards;
+	}
+
+	Node miniMax(Node node) {
+		System.out.println("MINIMAX SEARCH");
+		int bestUtil = -9999;
+
+		int v = maxM(node);
+		Node best = new Node();
+
+		for(Node suc : node.makeMove(node, node.player)){
+			if(suc.value == v && suc.utility > bestUtil) {
+				bestUtil = suc.utility;
+				best = suc;
+				System.out.println("teeeeeeeeeest");
+			}
+		}
+
+		return best;
+	}
+
+	public int maxM(Node node) {
+		System.out.println("max");
+
+		if(checkWin(node.makeSegs()) || node.isFull()) {
+			return node.util(node.makeSegs());
+		}
+
+		int v = -99999;
+		ArrayList<Node> aux = node.makeMove(node, '0');
+
+		for(Node suc : aux) {
+			int minV = minM(suc);
+			node.value = minV;
+			v = Math.max(v, minV);
+		}
+		return v;
+	}
+
+	public int minM(Node node) {
+		System.out.println("min");
+
+		if(checkWin(node.makeSegs()) || node.isFull()) {
+			return node.util(node.makeSegs());
+		}
+
+		int v = 99999;
+		ArrayList<Node> aux = node.makeMove(node, 'x');
+
+		for(Node suc : aux) {
+			int maxV = maxM(suc);
+			node.value = maxV;
+			v = Math.min(v, maxV);
+			return v;
+		}
+		return v;
 	}
 }
 
@@ -233,31 +304,46 @@ class ConnectFour {
 		}
 
 		Node board = new Node(game);
-		ArrayList<Node> test = board.makeMove(board);
+		/*ArrayList<Node> test = board.makeMove(board, board.player);
 		
 		for(int i = 0; i < test.size(); i++) {
 		    test.get(i).printBoard();
 		    System.out.println(test.get(i).utility);
-		}
+		}*/
 
-		/*board.printBoard();
-		while(!board.isFull()) {
-			System.out.print("Player " + board.player + " move: ");
-			int n = in.nextInt();
-			if(n>6 || n<0 || !board.checkPlay(n))System.out.println("Escolha um numero entre 0 e 6");
-			else{
-				board.play(n);
-				board.printBoard();
+		//board.printBoard();
+		while(true) {
+			board.printBoard();
+			if(board.checkWin(board.makeSegs())) {
+				System.out.println("Winner: " + board.player);
+			}
+
+			if(board.isFull()) {
+				System.out.println("Draw");
+			}
+
+			if(board.player == 'X') {
+				System.out.print("Player " + board.player + " move: ");
+				int n = in.nextInt();
+				if(n>6 || n<0 || !board.checkPlay(n))System.out.println("Escolha um numero entre 0 e 6");
+				else {
+					board.play(n, board.player);
+				/*board.printBoard();
 				ArrayList<char[]> segs = board.makeSegs();
 				int score = board.util(segs);
 				
 				if(board.checkWin(segs)) {
 					System.out.println("Winner is: " + board.player);
 					return;
+				}*/
 				}
-				
+				board = new Node(board.board, board.util(board.makeSegs()));
 				board.nextPlayer();
 			}
-		}*/
+			else if(board.player == 'O'){
+				board = board.miniMax(board);
+				board.nextPlayer();
+			}
+		}
 	}
 }
