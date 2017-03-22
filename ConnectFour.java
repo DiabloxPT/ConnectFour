@@ -7,12 +7,14 @@ class Node {
 	int line;
 	int utility;
 	int value;
+	int depth;
 
 	Node() {
 		this.player = 'X';
 		this.line = 0;
 		this.utility = 0;
 		this.value = 0;
+		this.depth = 0;
 	}
 
 	Node(char[][] board) {
@@ -21,6 +23,7 @@ class Node {
 		this.line=0;
 		this.utility = 0;
 		this.value = 0;
+		this.depth = 0;
 	}
 
 	Node(char[][] board, int utility) {
@@ -28,6 +31,19 @@ class Node {
 		this.player = 'X';
 		this.line=0;
 		this.utility = utility;
+		this.depth = 0;
+	}
+
+	Node(char[][] board, int utility, int depth) {
+		this.board = board;
+		this.player = 'X';
+		this.line=0;
+		this.utility = utility;
+		this.depth = depth;
+	}
+
+	int getDepth() {
+		return this.depth;
 	}
 
 	int findPos(int x) {
@@ -162,7 +178,7 @@ class Node {
 
 	}
 
-	int util(ArrayList<char[]> segs) {
+	public int util(ArrayList<char[]> segs) {
 		int countX = 0;
 		int countO = 0;
 		int utilVal = 0;
@@ -223,18 +239,24 @@ class Node {
 	ArrayList<Node> makeMove(Node board, char p) {
 		ArrayList<Node> newBoards = new ArrayList<Node>();
 		int[] possMoves = board.checkPlay2();
-		
-		for(int i = 0; i < possMoves.length; i++) {
-		    char[][] aux = copyMatrix(board.board);
-			Node newBoard = new Node(aux);
-			newBoard.play(possMoves[i], p);
-			ArrayList<char[]> segs = newBoard.makeSegs();
-			newBoard.utility = newBoard.util(segs);
-			
-			newBoards.add(newBoard);
+
+		while(board.getDepth() < 7) {
+			for (int i = 0; i < possMoves.length; i++) {
+				char[][] aux = copyMatrix(board.board);
+				Node newBoard = new Node(aux, 0, board.getDepth() + 1);
+
+				newBoard.play(possMoves[i], p);
+				ArrayList<char[]> segs = newBoard.makeSegs();
+				newBoard.utility = newBoard.util(segs);
+
+				newBoards.add(newBoard);
+			}
+			return newBoards;
 		}
-		return newBoards;
+		return;
 	}
+
+
 
 	Node miniMax(Node node) {
 		System.out.println("MINIMAX SEARCH");
@@ -255,14 +277,16 @@ class Node {
 	}
 
 	public int maxM(Node node) {
-		System.out.println("max");
+		System.out.println(node.getDepth());
+		ArrayList<Node> aux = new ArrayList<Node>();
 
 		if(checkWin(node.makeSegs()) || node.isFull()) {
 			return node.util(node.makeSegs());
 		}
 
 		int v = -99999;
-		ArrayList<Node> aux = node.makeMove(node, '0');
+
+		aux = makeMove(node, 'O');
 
 		for(Node suc : aux) {
 			int minV = minM(suc);
@@ -273,20 +297,21 @@ class Node {
 	}
 
 	public int minM(Node node) {
-		System.out.println("min");
+		System.out.println(node.getDepth());
+		ArrayList<Node> aux = new ArrayList<Node>();
 
 		if(checkWin(node.makeSegs()) || node.isFull()) {
 			return node.util(node.makeSegs());
 		}
 
 		int v = 99999;
-		ArrayList<Node> aux = node.makeMove(node, 'x');
+
+		aux = node.makeMove(node, 'X');
 
 		for(Node suc : aux) {
 			int maxV = maxM(suc);
 			node.value = maxV;
 			v = Math.min(v, maxV);
-			return v;
 		}
 		return v;
 	}
