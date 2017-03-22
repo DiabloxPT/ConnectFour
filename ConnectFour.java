@@ -8,6 +8,7 @@ class Node {
 	int utility;
 	int value;
 	int depth;
+	ArrayList<Node> sucessors;
 
 	Node() {
 		this.player = 'X';
@@ -15,6 +16,7 @@ class Node {
 		this.utility = 0;
 		this.value = 0;
 		this.depth = 0;
+		sucessors = new ArrayList<Node>();
 	}
 
 	Node(char[][] board) {
@@ -24,6 +26,7 @@ class Node {
 		this.utility = 0;
 		this.value = 0;
 		this.depth = 0;
+		sucessors = new ArrayList<Node>();
 	}
 
 	Node(char[][] board, int utility) {
@@ -32,6 +35,7 @@ class Node {
 		this.line=0;
 		this.utility = utility;
 		this.depth = 0;
+		sucessors = new ArrayList<Node>();
 	}
 
 	Node(char[][] board, int utility, int depth) {
@@ -40,6 +44,7 @@ class Node {
 		this.line=0;
 		this.utility = utility;
 		this.depth = depth;
+		sucessors = new ArrayList<Node>();
 	}
 
 	int getDepth() {
@@ -240,10 +245,10 @@ class Node {
 		ArrayList<Node> newBoards = new ArrayList<Node>();
 		int[] possMoves = board.checkPlay2();
 
-		while(board.getDepth() < 7) {
+		while(board.getDepth() < 2) {
 			for (int i = 0; i < possMoves.length; i++) {
 				char[][] aux = copyMatrix(board.board);
-				Node newBoard = new Node(aux, 0, board.getDepth() + 1);
+				Node newBoard = new Node(aux, util(board.makeSegs()), board.getDepth() + 1);
 
 				newBoard.play(possMoves[i], p);
 				ArrayList<char[]> segs = newBoard.makeSegs();
@@ -253,31 +258,31 @@ class Node {
 			}
 			return newBoards;
 		}
-		return;
+		return new ArrayList<Node>();
 	}
 
 
 
 	Node miniMax(Node node) {
 		System.out.println("MINIMAX SEARCH");
-		int bestUtil = -9999;
+		int bestUtil = Integer.MIN_VALUE;
 
 		int v = maxM(node);
 		Node best = new Node();
 
-		for(Node suc : node.makeMove(node, node.player)){
+		for(Node suc : node.sucessors){
+			System.out.println("teeeeeeeeeest");
 			if(suc.value == v && suc.utility > bestUtil) {
 				bestUtil = suc.utility;
 				best = suc;
 				System.out.println("teeeeeeeeeest");
 			}
 		}
-
 		return best;
 	}
 
 	public int maxM(Node node) {
-		System.out.println(node.getDepth());
+		//System.out.println(node.getDepth());
 		ArrayList<Node> aux = new ArrayList<Node>();
 
 		if(checkWin(node.makeSegs()) || node.isFull()) {
@@ -286,9 +291,10 @@ class Node {
 
 		int v = -99999;
 
-		aux = makeMove(node, 'O');
+		aux = node.makeMove(node, 'X');
+		node.sucessors = aux;
 
-		for(Node suc : aux) {
+		for(Node suc : node.sucessors) {
 			int minV = minM(suc);
 			node.value = minV;
 			v = Math.max(v, minV);
@@ -297,7 +303,7 @@ class Node {
 	}
 
 	public int minM(Node node) {
-		System.out.println(node.getDepth());
+		//System.out.println(node.getDepth());
 		ArrayList<Node> aux = new ArrayList<Node>();
 
 		if(checkWin(node.makeSegs()) || node.isFull()) {
@@ -307,8 +313,9 @@ class Node {
 		int v = 99999;
 
 		aux = node.makeMove(node, 'X');
+		node.sucessors = aux;
 
-		for(Node suc : aux) {
+		for(Node suc : sucessors) {
 			int maxV = maxM(suc);
 			node.value = maxV;
 			v = Math.min(v, maxV);
@@ -341,6 +348,7 @@ class ConnectFour {
 			board.printBoard();
 			if(board.checkWin(board.makeSegs())) {
 				System.out.println("Winner: " + board.player);
+				System.exit(0);
 			}
 
 			if(board.isFull()) {
@@ -367,7 +375,7 @@ class ConnectFour {
 			}
 			else if(board.player == 'O'){
 				board = board.miniMax(board);
-				board.nextPlayer();
+				board.player = 'X';
 			}
 		}
 	}
