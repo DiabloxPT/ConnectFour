@@ -50,6 +50,10 @@ class Node {
 	int getDepth() {
 		return this.depth;
 	}
+	
+	char getPlayer() {
+		return this.player;
+	}
 
 	int findPos(int x) {
 		for(int i = 0; i < 6; i++) {
@@ -245,7 +249,7 @@ class Node {
 		ArrayList<Node> newBoards = new ArrayList<Node>();
 		int[] possMoves = board.checkPlay2();
 
-		while(board.getDepth() < 2) {
+		while(board.getDepth() < 7) {
 			for (int i = 0; i < possMoves.length; i++) {
 				char[][] aux = copyMatrix(board.board);
 				Node newBoard = new Node(aux, util(board.makeSegs()), board.getDepth() + 1);
@@ -291,7 +295,7 @@ class Node {
 
 		int v = -99999;
 
-		aux = node.makeMove(node, 'X');
+		aux = node.makeMove(node, 'O');
 		node.sucessors = aux;
 
 		for(Node suc : node.sucessors) {
@@ -315,7 +319,7 @@ class Node {
 		aux = node.makeMove(node, 'X');
 		node.sucessors = aux;
 
-		for(Node suc : sucessors) {
+		for(Node suc : node.sucessors) {
 			int maxV = maxM(suc);
 			node.value = maxV;
 			v = Math.min(v, maxV);
@@ -347,7 +351,8 @@ class ConnectFour {
 		while(true) {
 			board.printBoard();
 			if(board.checkWin(board.makeSegs())) {
-				System.out.println("Winner: " + board.player);
+				board.nextPlayer();
+				System.out.println("Winner: " + board.getPlayer());
 				System.exit(0);
 			}
 
