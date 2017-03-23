@@ -50,7 +50,7 @@ class Node {
 	int getDepth() {
 		return this.depth;
 	}
-	
+
 	char getPlayer() {
 		return this.player;
 	}
@@ -88,7 +88,7 @@ class Node {
 		}
 		return true;
 	}
-	
+
 	int[] checkPlay2() {
 			int[] aux = new int[7];
 			int help=0;
@@ -98,8 +98,9 @@ class Node {
 					help++;
 				}
 			int[] check = new int[help];
-			for(int x=0; x<help; x++)
+			for(int x=0; x<help; x++){
 				 	check[x] = aux[x];
+				}
 			return check;
 		}
 
@@ -122,9 +123,9 @@ class Node {
 	ArrayList<char[]> makeSegs() {
 		line =0;
 		int nhor=0, nver=0, ndia1=0; 		//LINHA ONDE TERMINAM AS COMBINACOES HORIZONTAIS, VERTICAIS E DIAGONAIS
-		char[][] seg = new char[100][4];
+		char[][] seg = new char[69][4];
 		ArrayList<char[]> segs = new ArrayList<char[]>();
-		
+
 			//HORIZONTAL
 		for(int i=0; i<6; i++){
 			for(int j=0; j<=3; j++){
@@ -172,11 +173,11 @@ class Node {
 				line++;
 			}
 		}
-		
+
 		/*for(int i = 0; i < segs.size(); i++) {
 		    System.out.println(segs.get(i));
 		}*/
-		
+
 		return segs;
 		// EXEMPLO DE PRINT P/ TESTE
 		// System.out.println("\nDIAGONAL (DIREITA ESQUERDA)");
@@ -191,52 +192,52 @@ class Node {
 		int countX = 0;
 		int countO = 0;
 		int utilVal = 0;
-		
+
 		for(int j = 0; j < segs.size(); j++) {
 			for(int i = 0; i < 4; i++) {
 				if(segs.get(j)[i] == 'X') countX++;
 				if(segs.get(j)[i] == 'O') countO++;
 			}
-			
+
 			if(countX == 4) utilVal -= 512;
 			else if(countX == 3 && countO == 0) utilVal -= 50;
 			else if(countX == 2 && countO == 0) utilVal -= 10;
-			else if(countX == 1 && countO == 0) utilVal -= 1;		
+			else if(countX == 1 && countO == 0) utilVal -= 1;
 			else if(countO == 4) utilVal += 512;
 			else if(countO == 3 && countX == 0) utilVal += 50;
 			else if(countO == 2 && countX == 0) utilVal += 10;
 			else if(countO == 1 && countX == 0) utilVal += 1;
-		
+
 			countX = 0;
 			countO = 0;
 		}
-		
-		
-		
+
+
+
 		if(player == 'X') return 16 + utilVal;
 		else if(player == 'O') return -16 + utilVal;
-		
+
 		return 0;
 	}
 	boolean checkWin(ArrayList<char[]> segs) {
 		int countX = 0;
 		int countO = 0;
 		int utilVal = 0;
-		
+
 		for(int j = 0; j < segs.size(); j++) {
 			for(int i = 0; i < 4; i++) {
 				if(segs.get(j)[i] == 'X') countX++;
 				if(segs.get(j)[i] == 'O') countO++;
 			}
-			
+
 			if(countX == 4 || countO == 4) return true;
 			countX = 0;
 			countO = 0;
 		}
-		
+
 		return false;
 	}
-	
+
 	public static char[][] copyMatrix(char[][] current_table){
     char[][] aux_table = new char[6][7];
     for(int i=0;i<6;i++){
@@ -244,7 +245,7 @@ class Node {
     }
     return aux_table;
   }
-	
+
 	ArrayList<Node> makeMove(Node board, char p) {
 		ArrayList<Node> newBoards = new ArrayList<Node>();
 		int[] possMoves = board.checkPlay2();
@@ -261,7 +262,7 @@ class Node {
 				newBoards.add(newBoard);
 			}
 			return newBoards;
-		
+
 	}
 
 
@@ -274,13 +275,14 @@ class Node {
 		Node best = new Node();
 
 		for(Node suc : node.sucessors){
-			System.out.println("teeeeeeeeeest");
+
 			if(suc.value == v && suc.utility > bestUtil) {
 				bestUtil = suc.utility;
 				best = suc;
-				System.out.println("teeeeeeeeeest");
+				//System.out.println(bestUtil);
 			}
 		}
+
 		return best;
 	}
 
@@ -289,12 +291,12 @@ class Node {
 		ArrayList<Node> aux = new ArrayList<Node>();
 
 		if(checkWin(node.makeSegs()) || node.isFull()) {
-			return node.util(node.makeSegs());
+			return util(node.makeSegs());
 		}
 
 		int v = -99999;
-		
-		if(node.getDepth() < 2) {
+
+		if(node.getDepth() < 5) {
 		aux = node.makeMove(node, 'O');
 		node.sucessors = aux;
 		}
@@ -312,12 +314,12 @@ class Node {
 		ArrayList<Node> aux = new ArrayList<Node>();
 
 		if(checkWin(node.makeSegs()) || node.isFull()) {
-			return node.util(node.makeSegs());
+			return util(node.makeSegs());
 		}
 
 		int v = 99999;
 
-		if(node.getDepth() < 2) {
+		if(node.getDepth() < 5) {
 		aux = node.makeMove(node, 'X');
 		node.sucessors = aux;
 		}
@@ -344,7 +346,7 @@ class ConnectFour {
 
 		Node board = new Node(game);
 		/*ArrayList<Node> test = board.makeMove(board, board.player);
-		
+
 		for(int i = 0; i < test.size(); i++) {
 		    test.get(i).printBoard();
 		    System.out.println(test.get(i).utility);
@@ -372,7 +374,7 @@ class ConnectFour {
 				/*board.printBoard();
 				ArrayList<char[]> segs = board.makeSegs();
 				int score = board.util(segs);
-				
+
 				if(board.checkWin(segs)) {
 					System.out.println("Winner is: " + board.player);
 					return;
