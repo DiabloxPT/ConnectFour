@@ -199,14 +199,14 @@ class Node {
 				if(segs.get(j)[i] == 'O') countO++;
 			}
 
-			if(countX == 4) utilVal -= 512;
-			else if(countX == 3 && countO == 0) utilVal -= 50;
-			else if(countX == 2 && countO == 0) utilVal -= 10;
-			else if(countX == 1 && countO == 0) utilVal -= 1;
-			else if(countO == 4) utilVal += 512;
-			else if(countO == 3 && countX == 0) utilVal += 50;
-			else if(countO == 2 && countX == 0) utilVal += 10;
-			else if(countO == 1 && countX == 0) utilVal += 1;
+			if(countX == 4) utilVal += 512;
+			else if(countX == 3 && countO == 0) utilVal += 50;
+			else if(countX == 2 && countO == 0) utilVal += 10;
+			else if(countX == 1 && countO == 0) utilVal += 1;
+			else if(countO == 4) utilVal -= 512;
+			else if(countO == 3 && countX == 0) utilVal -= 50;
+			else if(countO == 2 && countX == 0) utilVal -= 10;
+			else if(countO == 1 && countX == 0) utilVal -= 1;
 
 			countX = 0;
 			countO = 0;
@@ -214,8 +214,8 @@ class Node {
 
 
 
-		if(player == 'X') return 16 + utilVal;
-		else if(player == 'O') return -16 + utilVal;
+		if(player == 'X') return -16 + utilVal;
+		else if(player == 'O') return 16 + utilVal;
 
 		return 0;
 	}
@@ -276,10 +276,19 @@ class Node {
 
 		for(Node suc : node.sucessors){
 
-			if(suc.value == v && suc.utility > bestUtil) {
-				bestUtil = suc.utility;
-				best = suc;
-				//System.out.println(bestUtil);
+			if(suc.value == v) {
+				if(suc.utility < 0 && suc.utility > bestUtil) {
+					bestUtil = suc.utility;
+					best = suc;
+				}
+				else if(suc.utility > 0 && suc.utility < bestUtil) {
+					bestUtil = suc.utility;
+					best = suc;
+				}
+				else if (suc.utility == bestUtil){
+					bestUtil = suc.utility;
+					best = suc;
+				}
 			}
 		}
 
