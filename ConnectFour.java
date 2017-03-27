@@ -98,9 +98,7 @@ class Node {
 					help++;
 				}
 			int[] check = new int[help];
-			for(int x=0; x<help; x++){
-				 	check[x] = aux[x];
-				}
+		System.arraycopy(aux, 0, check, 0, help);
 			return check;
 		}
 
@@ -349,14 +347,113 @@ class Node {
 		int v = 99999;
 
 		if(node.getDepth() < 5) {
-		aux = node.makeMove(node, 'X');
-		node.sucessors = aux;
+			aux = node.makeMove(node, 'X');
+			node.sucessors = aux;
 		}
 
 		for(Node suc : node.sucessors) {
 			int maxV = maxM(suc);
 			node.value = maxV;
 			v = Math.min(v, maxV);
+		}
+		return v;
+	}
+
+	Node AlphaBeta(Node node) {
+		System.out.println("ALPHA-BETA SEARCH");
+		int bestUtil = 999999;
+
+		int v = ABmax(node, -99999, 99999);
+		Node best = new Node();
+
+		for(Node suc : node.sucessors){
+			suc.printBoard();
+			System.out.println("Valor do node.value = " + suc.value);
+			System.out.println("Valor no value = " +  v);
+			System.out.println("Valor no node.utility = " +  suc.utility);
+			System.out.println("Valor no bestutility = " +  bestUtil);
+			if(suc.value == v && suc.utility < bestUtil) {
+				bestUtil = suc.utility;
+				best = suc;
+				/*else if (suc.utility == bestUtil){
+					best = suc;
+				}*/
+			}
+		}
+
+		/*if(best.board == null) {
+			bestUtil = 999999;
+			v = 99999;
+			for(Node suc : node.sucessors) {
+				if(suc.value == v) {
+					if (suc.utility > 0 && suc.utility < bestUtil) {
+						bestUtil = suc.utility;
+						best = suc;
+					}
+				}
+			}
+		}*/
+
+		if(best.board == null) {
+			for(Node suc : node.sucessors) {
+				if (suc.value == 0 && suc.utility < bestUtil) {
+					bestUtil = suc.utility;
+					best = suc;
+				}
+			}
+		}
+
+		return best;
+	}
+
+	public int ABmax(Node node, int alpha1, int beta1) {
+		int alpha = alpha1;
+		//System.out.println(node.getDepth());
+		ArrayList<Node> aux = new ArrayList<Node>();
+
+		if(checkWin(node.makeSegs()) || node.isFull()) {
+			return util(node.makeSegs());
+		}
+
+		int v = -99999;
+
+		if(node.getDepth() < 5) {
+			aux = node.makeMove(node, 'O');
+			node.sucessors = aux;
+		}
+
+		for(Node suc : node.sucessors) {
+			int minV = ABmin(suc, alpha, beta1);
+			node.value = minV;
+			v = Math.max(v, minV);
+			if(v > beta1) return v;
+			alpha = Math.max(v, alpha);
+		}
+		return v;
+	}
+
+	public int ABmin(Node node, int alpha1, int beta1) {
+		int beta = beta1;
+		//System.out.println(node.getDepth());
+		ArrayList<Node> aux = new ArrayList<Node>();
+
+		if(checkWin(node.makeSegs()) || node.isFull()) {
+			return util(node.makeSegs());
+		}
+
+		int v = 99999;
+
+		if(node.getDepth() < 5) {
+		aux = node.makeMove(node, 'X');
+		node.sucessors = aux;
+		}
+
+		for(Node suc : node.sucessors) {
+			int maxV = ABmax(suc, alpha1, beta);
+			node.value = maxV;
+			v = Math.min(v, maxV);
+			if(v < alpha1) return v;
+			beta = Math.min(v, beta);
 		}
 		return v;
 	}
@@ -382,6 +479,16 @@ class ConnectFour {
 		}*/
 
 		//board.printBoard();
+		System.out.print("Escolha quem joga 1º(C para computador, P para utilizador):");
+		String turn = in.next();
+		if(turn.equals("P")) {
+			board.player = 'X';
+		}
+		else if(turn.equals("C")) board.player = 'O';
+
+		System.out.print("Escolha o algoritmo(M para minimax, A para alphabeta):");
+		String algor = in.next();
+
 		while(true) {
 			board.printBoard();
 			if(board.checkWin(board.makeSegs())) {
@@ -415,7 +522,12 @@ class ConnectFour {
 				board.nextPlayer();
 			}
 			else if(board.player == 'O'){
-				board = board.miniMax(board);
+				if(algor.equals("M")) {
+					board = board.miniMax(board);
+				}
+				else if(algor.equals("A")) {
+					board = board.AlphaBeta(board);
+				}
 				board.player = 'X';
 			}
 		}
