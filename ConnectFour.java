@@ -139,6 +139,7 @@ class Node {
 		}
 		nhor = line;
 
+
 		for(int i=0; i<7; i++){
 			for(int j=0; j<=2; j++){
 				seg[line][0] = board[j][i];
@@ -200,8 +201,8 @@ class Node {
 			}
 
 			if(countX == 4) utilVal += 512;
-			else if(countX == 3 && countO == 0) utilVal += 50;
-			else if(countX == 2 && countO == 0) utilVal += 10;
+			else if(countX == 3 && countO == 0) utilVal += 100;
+			else if(countX == 2 && countO == 0) utilVal += 20;
 			else if(countX == 1 && countO == 0) utilVal += 1;
 			else if(countO == 4) utilVal -= 512;
 			else if(countO == 3 && countX == 0) utilVal -= 50;
@@ -269,23 +270,42 @@ class Node {
 
 	Node miniMax(Node node) {
 		System.out.println("MINIMAX SEARCH");
-		int bestUtil = Integer.MIN_VALUE;
+		int bestUtil = 999999;
 
 		int v = maxM(node);
 		Node best = new Node();
 
 		for(Node suc : node.sucessors){
+			suc.printBoard();
+			System.out.println("Valor do node.value = " + suc.value);
+			System.out.println("Valor no value = " +  v);
+			System.out.println("Valor no node.utility = " +  suc.utility);
+			System.out.println("Valor no bestutility = " +  bestUtil);
+			if(suc.value == v && suc.utility < bestUtil) {
+				bestUtil = suc.utility;
+				best = suc;
+				/*else if (suc.utility == bestUtil){
+					best = suc;
+				}*/
+			}
+		}
 
-			if(suc.value == v) {
-				if(suc.utility < 0 && suc.utility > bestUtil) {
-					bestUtil = suc.utility;
-					best = suc;
+		/*if(best.board == null) {
+			bestUtil = 999999;
+			v = 99999;
+			for(Node suc : node.sucessors) {
+				if(suc.value == v) {
+					if (suc.utility > 0 && suc.utility < bestUtil) {
+						bestUtil = suc.utility;
+						best = suc;
+					}
 				}
-				else if(suc.utility > 0 && suc.utility < bestUtil) {
-					bestUtil = suc.utility;
-					best = suc;
-				}
-				else if (suc.utility == bestUtil){
+			}
+		}*/
+
+		if(best.board == null) {
+			for(Node suc : node.sucessors) {
+				if (suc.value == 0 && suc.utility < bestUtil) {
 					bestUtil = suc.utility;
 					best = suc;
 				}
@@ -377,8 +397,11 @@ class ConnectFour {
 			if(board.player == 'X') {
 				System.out.print("Player " + board.player + " move: ");
 				int n = in.nextInt();
-				if(n>6 || n<0 || !board.checkPlay(n))System.out.println("Escolha um numero entre 0 e 6");
-				else {
+				while(n>6 || n<0 || !board.checkPlay(n)) {
+					System.out.println("Escolha um numero entre 0 e 6");
+					n = in.nextInt();
+					board.printBoard();
+				}
 					board.play(n, board.player);
 				/*board.printBoard();
 				ArrayList<char[]> segs = board.makeSegs();
@@ -388,7 +411,6 @@ class ConnectFour {
 					System.out.println("Winner is: " + board.player);
 					return;
 				}*/
-				}
 				board = new Node(board.board, board.util(board.makeSegs()));
 				board.nextPlayer();
 			}
