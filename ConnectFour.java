@@ -274,11 +274,6 @@ class Node {
 		Node best = new Node();
 
 		for(Node suc : node.sucessors){
-			suc.printBoard();
-			System.out.println("Valor do node.value = " + suc.value);
-			System.out.println("Valor no value = " +  v);
-			System.out.println("Valor no node.utility = " +  suc.utility);
-			System.out.println("Valor no bestutility = " +  bestUtil);
 			if(suc.value == v && suc.utility < bestUtil) {
 				bestUtil = suc.utility;
 				best = suc;
@@ -366,12 +361,7 @@ class Node {
 		int v = ABmax(node, -99999, 99999);
 		Node best = new Node();
 
-		for(Node suc : node.sucessors){
-			suc.printBoard();
-			System.out.println("Valor do node.value = " + suc.value);
-			System.out.println("Valor no value = " +  v);
-			System.out.println("Valor no node.utility = " +  suc.utility);
-			System.out.println("Valor no bestutility = " +  bestUtil);
+		for(Node suc : node.sucessors) {
 			if(suc.value == v && suc.utility < bestUtil) {
 				bestUtil = suc.utility;
 				best = suc;
@@ -522,12 +512,15 @@ class ConnectFour {
 				board.nextPlayer();
 			}
 			else if(board.player == 'O'){
+				long startTime = System.currentTimeMillis();
 				if(algor.equals("M")) {
 					board = board.miniMax(board);
 				}
 				else if(algor.equals("A")) {
 					board = board.AlphaBeta(board);
 				}
+				long endTime = System.currentTimeMillis();
+				System.out.println("Tempo de execução: "+((endTime-startTime)/1000)+"s ("+(endTime-startTime)+"ms)");
 				board.player = 'X';
 			}
 		}
